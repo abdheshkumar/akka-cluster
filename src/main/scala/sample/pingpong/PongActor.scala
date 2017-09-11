@@ -20,12 +20,13 @@ object PongActor {
 
   def main(args: Array[String]): Unit = {
     // Override the configuration of the port when specified as program argument
-    val port = if (args.isEmpty) "0" else args(0)
+    val default = ConfigFactory.load()
+    val port = default.getString("clustering.port")
     val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$port").
       withFallback(ConfigFactory.parseString("akka.cluster.roles = [backend]")).
       withFallback(ConfigFactory.load("pingpong"))
 
-    val system = ActorSystem("ClusterSystem", config)
+    val system = ActorSystem(default.getString("clustering.cluster.name"), config)
     system.actorOf(Props[PongActor], name = "pongActor")
   }
 }

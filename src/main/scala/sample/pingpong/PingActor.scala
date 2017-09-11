@@ -16,6 +16,7 @@ import scala.concurrent.Await
 class PingActor() extends Actor with ActorLogging {
 
   import PingActor._
+
   val pong = context.actorOf(FromConfig.props(Props[PongActor]),
     name = "pongActorRouter")
   implicit val executionContext = context.dispatcher
@@ -31,19 +32,22 @@ class PingActor() extends Actor with ActorLogging {
   }
 
   def sendJobs: Unit = {
-    context.system.scheduler.schedule(1.second,5.second)(pong ! Ping)
+    context.system.scheduler.schedule(1.second, 5.second)(pong ! Ping)
   }
 }
 
 object PingActor {
+
   case object Ping
 
   def main(args: Array[String]): Unit = {
+    val default = ConfigFactory.load()
+    val port = default.getString("clustering.port")
+    val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$port")
+      .withFallback(ConfigFactory.parseString("akka.cluster.roles = [frontend]"))
+      .withFallback(ConfigFactory.load("pingpong"))
 
-    val config = ConfigFactory.parseString("akka.cluster.roles = [frontend]").
-      withFallback(ConfigFactory.load("pingpong"))
-
-    val system = ActorSystem("ClusterSystem", config)
+    val system = ActorSystem(default.getString("clustering.cluster.name"), config)
 
     Cluster(system) registerOnMemberUp {
       system.actorOf(Props[PingActor], name = "pingActor")

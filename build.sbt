@@ -18,19 +18,15 @@ libraryDependencies ++= Seq(
 
 
 
-//mainClass in Compile := Some("sample.pingpong.PingPongApp")
-
-//dockerEntrypoint := Seq("bin/%s" format executableScriptName.value)
-
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
 
 dockerEntrypoint := Seq("bin/ping-actor","bin/pong-actor")
 
+dockerExposedPorts in Docker := Seq(1600)
+
+
 maintainer in Docker := "Abdhesh Kumar <abdhesh.mca@gmail.com>"
 packageSummary in Docker := "A small docker application"
 packageDescription := "Docker [micro|nano] Service"
-// exposing the play ports
-//dockerExposedPorts := Seq(9000)
-// Only add this if you want to rename your docker image name
 packageName in Docker := "akka-cluster"

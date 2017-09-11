@@ -1,0 +1,54 @@
+version: '2'
+services:
+  seed:
+    image: akka-cluster:0.1
+    ports:
+      - '1600:1600'
+    entrypoint:
+      - bin/pong-actor
+    environment:
+      CLUSTER_PORT: 1600
+      CLUSTER_IP: seed
+      SEED_PORT_1600_TCP_ADDR: seed
+  c1:
+    image: akka-cluster:0.1
+    ports:
+      - '1601:1601'
+    entrypoint:
+      - bin/pong-actor
+    environment:
+      CLUSTER_PORT: 1601
+      CLUSTER_IP: c1
+      SEED_PORT_1600_TCP_ADDR: seed
+  c2:
+    image: akka-cluster:0.1
+    ports:
+      - '1602:1602'
+    entrypoint:
+      - bin/pong-actor
+    environment:
+      CLUSTER_PORT: 1602
+      CLUSTER_IP: c2
+      SEED_PORT_1600_TCP_ADDR: seed
+
+  c3:
+     image: akka-cluster:0.1
+     ports:
+       - '1603:1603'
+     entrypoint:
+       - bin/pong-actor
+     environment:
+       CLUSTER_PORT: 1603
+       CLUSTER_IP:  c3
+       SEED_PORT_1600_TCP_ADDR: seed
+
+  c4:
+    image: akka-cluster:0.1
+    ports:
+      - '1604:1604'
+    entrypoint:
+      - bin/ping-actor
+    environment:
+      CLUSTER_PORT: 1604
+      CLUSTER_IP:  c4
+      SEED_PORT_1600_TCP_ADDR: seed
